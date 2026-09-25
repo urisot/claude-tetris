@@ -35,6 +35,7 @@ Es una versión jugable del Tetris clásico con todas las mecánicas que esperar
 
 - Tablero de **10 × 20** celdas.
 - Las **7 piezas estándar** (I, O, T, S, Z, J, L) con colores diferenciados, más una pieza especial **U** de 5 bloques que aparece ocasionalmente (~5 %).
+- **Power-ups aleatorios**: cada cierto número de líneas eliminadas aparece garantizada una pieza especial de 1 bloque con un efecto al fijarse: **Bomba** (destruye un área 3×3), **Rayo** (limpia toda la fila y columna donde cae), **Tinte** (elimina todos los bloques del color más repetido del tablero) o **Gravedad** (compacta los huecos de cada columna). Se distinguen por color e icono (`B`/`R`/`T`/`G`) y muestran un aviso en pantalla al activarse.
 - **Rotación** con _wall kicks_ básicos (pequeños desplazamientos para que la pieza pueda rotar pegada a la pared).
 - **Soft drop** (bajada acelerada) y **hard drop** (caída instantánea).
 - **Pieza fantasma** (_ghost piece_): muestra dónde aterrizará la pieza actual.
@@ -119,6 +120,7 @@ Contiene toda la lógica del juego. A grandes rasgos:
 - **Nivel y velocidad**: el nivel sube cada 10 líneas; la velocidad de caída se calcula como `max(100, 1000 − (level − 1) × 90)` milisegundos.
 - **Ghost piece** (`ghostY`): proyecta la posición final de la pieza actual hacia abajo y la dibuja con `globalAlpha = 0.2`.
 - **Tema** (`applyTheme`, `initTheme`): alterna el atributo `data-theme` en `<html>`, sincroniza el switch y persiste la preferencia en `localStorage` (por defecto: oscuro). El color de la grilla del canvas (`gridColor`) se lee de la variable CSS `--grid-color` activa.
+- **Power-ups** (`applyPowerEffect` y helpers `applyBomb`/`applyLaser`/`applyDye`/`applyGravityCompact`): en `clearLines()` se cuenta cada línea eliminada y, al alcanzar un múltiplo de `POWERUP_LINE_INTERVAL`, la siguiente pieza generada por `randomPiece()` es forzosamente una de las 4 piezas especiales (1 bloque, tipos `BOMB_TYPE`/`LASER_TYPE`/`DYE_TYPE`/`GRAVITY_TYPE`). `lockPiece()` invoca su efecto sobre el `board` justo después de `merge()` y antes de `clearLines()`, de forma que cualquier fila que quede completa tras el efecto se elimina con la lógica normal.
 
 ### Flujo del juego
 
@@ -177,6 +179,7 @@ Algunos parámetros fáciles de tunear en `game.js`:
 | `BLOCK`        | Tamaño en píxeles de cada celda          | `30`                  |
 | `COLORS`       | Paleta de colores por tipo de pieza      | 8 colores             |
 | `U_CHANCE`     | Probabilidad de que salga la pieza U     | `0.05`                |
+| `POWERUP_LINE_INTERVAL` | Líneas eliminadas entre cada power-up garantizado | `5`      |
 | `LINE_SCORES`  | Puntos por 1, 2, 3 o 4 líneas eliminadas | `[0,100,300,500,800]` |
 | `dropInterval` | Velocidad inicial de caída en ms         | `1000`                |
 
