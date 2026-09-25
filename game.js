@@ -200,8 +200,12 @@ function applyPowerEffect(piece) {
     case BOMB_TYPE: applyBomb(px, py); break;
     case LASER_TYPE: applyLaser(px, py); break;
     case DYE_TYPE: applyDye(); break;
-    case GRAVITY_TYPE: applyGravityCompact(); break;
+    case GRAVITY_TYPE: break;
   }
+  // Bomb/laser/dye remove blocks from the middle of the stack, which would
+  // otherwise leave unreachable holes that can never be filled by falling
+  // pieces and permanently block clearLines() on those rows.
+  applyGravityCompact();
   effectMessage = POWER_NAMES[piece.type];
   effectMessageUntil = performance.now() + 800;
 }
