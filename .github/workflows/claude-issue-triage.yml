@@ -48,6 +48,37 @@ jobs:
                  funciones o constantes relevantes.
                - Enfoque de solución recomendado a alto nivel (sin escribir código).
 
+            Formato del comentario (GitHub Flavored Markdown):
+            - Usa esta estructura exacta de encabezados:
+
+              ## 🔍 Diagnóstico técnico
+
+              ### Resumen
+              (causa probable o resumen del pedido)
+
+              ### Área afectada
+              (lista con viñetas `-` de funciones/constantes de `game.js`,
+              cada nombre entre backticks, ej: `COLORS`, `drawBlock()`)
+
+              ### Enfoque de solución recomendado
+              (lista numerada `1.` con los pasos a alto nivel)
+
+              ### Labels aplicados
+              (labels separados por coma, cada uno entre backticks)
+
+            - Usa `**negrita**` para resaltar puntos clave y backticks para
+              nombres de archivos, funciones, constantes y valores.
+            - Deja una línea en blanco entre encabezados, párrafos y listas
+              para que GitHub los renderice correctamente.
+            - NO escapes los saltos de línea como `\n` literal: el comentario
+              debe contener saltos de línea reales. Para eso, publícalo con un
+              heredoc de comillas simples leyendo el body desde stdin:
+
+              gh issue comment ${{ github.event.issue.number }} --body-file - <<'EOF'
+              ## 🔍 Diagnóstico técnico
+              ...
+              EOF
+
             Restricciones importantes:
             - NO modifiques ningún archivo del repositorio (ni código ni
               CLAUDE.md ni README).
