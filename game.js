@@ -206,6 +206,14 @@ function applyPowerEffect(piece) {
   effectMessageUntil = performance.now() + 800;
 }
 
+function moveLeft() {
+  if (!collide(current.shape, current.x - 1, current.y)) current.x--;
+}
+
+function moveRight() {
+  if (!collide(current.shape, current.x + 1, current.y)) current.x++;
+}
+
 function ghostY() {
   let gy = current.y;
   while (!collide(current.shape, current.x, gy + 1)) gy++;
@@ -412,10 +420,10 @@ document.addEventListener('keydown', e => {
   if (paused || gameOver) return;
   switch (e.code) {
     case 'ArrowLeft':
-      if (!collide(current.shape, current.x - 1, current.y)) current.x--;
+      moveLeft();
       break;
     case 'ArrowRight':
-      if (!collide(current.shape, current.x + 1, current.y)) current.x++;
+      moveRight();
       break;
     case 'ArrowDown':
       softDrop();
@@ -432,6 +440,58 @@ document.addEventListener('keydown', e => {
   updateHUD();
 });
 
+const TOUCH_REPEAT_DELAY = 250;
+const TOUCH_REPEAT_INTERVAL = 80;
+
+const TOUCH_ACTIONS = {
+  left: moveLeft,
+  right: moveRight,
+  down: softDrop,
+  rotate: tryRotate,
+  drop: hardDrop,
+};
+
+function bindTouchControls() {
+  document.querySelectorAll('#touch-controls .touch-btn').forEach(btn => {
+    const action = btn.dataset.action;
+    const repeatable = btn.dataset.repeat === 'true';
+    let repeatTimeout = null;
+    let repeatInterval = null;
+
+    const run = () => {
+      if (action === 'pause') {
+        togglePause();
+        return;
+      }
+      if (paused || gameOver) return;
+      TOUCH_ACTIONS[action]();
+      updateHUD();
+    };
+
+    const stop = () => {
+      clearTimeout(repeatTimeout);
+      clearInterval(repeatInterval);
+      repeatTimeout = null;
+      repeatInterval = null;
+    };
+
+    const start = e => {
+      e.preventDefault();
+      run();
+      if (repeatable) {
+        repeatTimeout = setTimeout(() => {
+          repeatInterval = setInterval(run, TOUCH_REPEAT_INTERVAL);
+        }, TOUCH_REPEAT_DELAY);
+      }
+    };
+
+    btn.addEventListener('pointerdown', start);
+    btn.addEventListener('pointerup', stop);
+    btn.addEventListener('pointerleave', stop);
+    btn.addEventListener('pointercancel', stop);
+  });
+}
+
 restartBtn.addEventListener('click', init);
 themeToggle.addEventListener('change', () => {
   applyTheme(themeToggle.checked ? 'light' : 'dark');
@@ -439,4 +499,5 @@ themeToggle.addEventListener('change', () => {
 });
 
 initTheme();
+bindTouchControls();
 init();

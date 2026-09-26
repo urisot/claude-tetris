@@ -200,6 +200,53 @@ kbd {
   color: var(--kbd-color);
 }
 
+/* ---- Controles táctiles (móvil) ---- */
+.touch-controls {
+  display: none;
+}
+
+@media (pointer: coarse) {
+  .touch-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    max-width: 300px;
+    margin-top: 4px;
+  }
+
+  .touch-row {
+    display: flex;
+    gap: 10px;
+  }
+
+  .touch-btn {
+    flex: 1;
+    padding: 16px 0;
+    font-size: 22px;
+    background: var(--kbd-bg);
+    border: 1px solid var(--kbd-border);
+    color: var(--kbd-color);
+    border-radius: 8px;
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .touch-btn:active {
+    background: var(--value-color);
+    color: var(--restart-color);
+  }
+
+  .game-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .panel {
+    width: 300px;
+  }
+}
+
 /* ---- Overlay ---- */
 .overlay {
   position: absolute;
